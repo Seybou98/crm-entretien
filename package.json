@@ -1,9 +1,9 @@
 {
   "scripts": {
     "chatbot:build": "node scripts/build-chatbot-knowledge.mjs",
-    "predev": "npm run chatbot:build",
+    "predev": "npm run chatbot:build || echo 'chatbot build skipped'",
     "dev": "vite --host 0.0.0.0 --port 5173",
-    "prebuild": "npm run chatbot:build",
+    "prebuild": "npm run chatbot:build || echo 'chatbot build skipped'",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port 5173",
     "test": "vitest run"
