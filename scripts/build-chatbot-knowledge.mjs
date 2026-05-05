@@ -10,7 +10,9 @@ const sources = [
   {
     id: "cgv",
     title: "CGV",
-    filePath: path.resolve(projectRoot, "../src/utils/CGV LABEL ENERGIE.txt"),
+    // Le fichier peut varier selon les environnements (Netlify build / local).
+    // On le cherche dans le projet courant.
+    filePath: path.resolve(projectRoot, "src/utils/CGV LABEL ENERGIE.txt"),
     type: "txt",
   },
   {
@@ -106,7 +108,14 @@ async function buildKnowledgeBase() {
   const allChunks = [];
 
   for (const source of sources) {
-    const raw = await readFile(source.filePath, "utf8");
+    let raw = "";
+    try {
+      raw = await readFile(source.filePath, "utf8");
+    } catch (e) {
+      // Non bloquant : on peut déployer le site même si un fichier de connaissance est absent.
+      console.warn(`[chatbot] source "${source.id}" introuvable → ignorée:`, source.filePath);
+      continue;
+    }
     const chunks = source.type === "md" ? chunkMarkdown(source, raw) : chunkText(source, raw);
     allChunks.push(...chunks.filter((chunk) => chunk.content.length >= 40));
   }
